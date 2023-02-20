@@ -13,10 +13,10 @@ import ProductCompareIcon from "@components/icons/product-compare-icon";
 import RatingDisplay from "@components/common/rating-display";
 
 interface ProductProps {
-  product: Product;
+  product: Product["attributes"];
   className?: string;
   contactClassName?: string;
-  imageContentClassName?: string;
+
   variant?:
     | "grid"
     | "gridSlim"
@@ -27,8 +27,7 @@ interface ProductProps {
     | "gridTrendy"
     | "rounded"
     | "circle";
-  imgWidth?: number | string;
-  imgHeight?: number | string;
+
   imgLoading?: "eager" | "lazy";
   hideProductDescription?: boolean;
   showCategory?: boolean;
@@ -43,10 +42,9 @@ const ProductCard: FC<ProductProps> = ({
   product,
   className = "",
   contactClassName = "",
-  imageContentClassName = "",
+
   variant = "list",
-  imgWidth = 340,
-  imgHeight = 440,
+
   imgLoading,
   hideProductDescription = false,
   showCategory = false,
@@ -57,9 +55,8 @@ const ProductCard: FC<ProductProps> = ({
   disableBorderRadius = false,
 }) => {
   const { openModal, setModalView, setModalData } = useUI();
-  const placeholderImage = `/assets/placeholder/products/product-${variant}.svg`;
   const { price, basePrice, discount } = usePrice({
-    amount: product.sale_price ? product.sale_price : product.price,
+    amount: product.price ? product.price : product.price,
     baseAmount: product.price,
     currencyCode: "USD",
   });
@@ -68,7 +65,8 @@ const ProductCard: FC<ProductProps> = ({
     setModalView("PRODUCT_VIEW");
     return openModal();
   }
-
+  const image = product?.image_header?.data?.attributes.formats.large.url;
+  const imageAlt = product?.image_header?.data?.attributes.alternativeText;
   return (
     <div
       className={cn(
@@ -95,57 +93,27 @@ const ProductCard: FC<ProductProps> = ({
             variant === "list",
           "bg-transparent": variant === "grid" && bgTransparent === true,
         },
-        className
+        className,
+        'h-96'
       )}
       onClick={handlePopupView}
       role="button"
-      title={product?.name}
+      title={product?.title}
     >
       <div
-        className={cn(
-          "flex",
-          {
-            "mb-3 md:mb-3.5": variant === "grid",
-            "mb-3 md:mb-3.5 pb-0": variant === "gridSlim",
-            "flex-shrink-0 w-32 sm:w-44 md:w-36 lg:w-44":
-              variant === "listSmall",
-            "mb-3 md:mb-3.5 relative":
-              variant === "gridModern" ||
-              variant === "gridModernWide" ||
-              variant === "gridTrendy",
-          },
-          imageContentClassName
-        )}
+        className="bg-black border"
       >
-        <Image
-          src={product?.image?.thumbnail ?? placeholderImage}
-          width={demoVariant === "ancient" ? 352 : imgWidth}
-          height={demoVariant === "ancient" ? 452 : imgHeight}
-          loading={imgLoading}
-          quality={100}
-          alt={product?.name || "Product Image"}
-          className={cn(
-            `bg-gray-300 object-cover ${
-              !disableBorderRadius && "rounded-s-md"
-            }`,
-            {
-              "w-full transition duration-200 ease-in":
-                variant === "grid" ||
-                variant === "gridModern" ||
-                variant === "gridModernWide" ||
-                variant === "gridTrendy",
-              "rounded-md group-hover:rounded-b-none":
-                (variant === "grid" && !disableBorderRadius) ||
-                (variant === "gridModern" && !disableBorderRadius) ||
-                (variant === "gridModernWide" && !disableBorderRadius) ||
-                (variant === "gridTrendy" && !disableBorderRadius),
-              "rounded-md transition duration-150 ease-linear transform group-hover:scale-105":
-                variant === "gridSlim",
-              "rounded-s-md transition duration-200 ease-linear transform group-hover:scale-105":
-                variant === "list",
-            }
-          )}
-        />
+        {image && (
+          <Image
+            src={`${process.env.NEXT_PUBLIC_STRAPI_IMAGE_URL}${image}`}
+            width={1000}
+            height={350}
+            loading={imgLoading}
+            quality={100}
+            alt={imageAlt}
+            className="object-cover"
+          />
+        )}
 
         <div className="absolute top-3.5 md:top-5 3xl:top-7 start-3.5 md:start-5 3xl:start-7 flex flex-col gap-y-1 items-start">
           {discount &&
@@ -160,7 +128,7 @@ const ProductCard: FC<ProductProps> = ({
               </span>
             )}
 
-          {product?.isNewArrival &&
+          {/* {product?.isNewArrival &&
             (variant === "gridModernWide" ||
               variant === "gridModern" ||
               variant === "gridTrendy") && (
@@ -169,7 +137,7 @@ const ProductCard: FC<ProductProps> = ({
                   New <span className="hidden sm:inline">Arrival</span>
                 </p>
               </span>
-            )}
+            )} */}
         </div>
 
         {variant === "gridModernWide" && (
@@ -210,9 +178,9 @@ const ProductCard: FC<ProductProps> = ({
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
             </svg>
             <span className="text-xs sm:text-sm text-heading font-semibold truncate">
-              4.5
+              {product.reviews}
             </span>
-            {product.quantity === 0 && (
+            {product?.stock === 0 && (
               <span className="text-xs sm:text-sm leading-5 ps-3 font-semibold text-[#EF4444]">
                 Out of stock
               </span>
@@ -256,7 +224,7 @@ const ProductCard: FC<ProductProps> = ({
             "text-heading": !bgTransparent,
           })}
         >
-          {product?.name}
+          {product?.title}
         </h2>
         {!hideProductDescription && product?.description && (
           <p className="text-body text-xs lg:text-sm leading-normal xl:leading-relaxed max-w-[250px] truncate">

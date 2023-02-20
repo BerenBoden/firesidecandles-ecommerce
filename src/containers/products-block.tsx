@@ -43,10 +43,8 @@ const ProductsBlock: React.FC<ProductsProps> = ({
   loading,
   error,
   uniqueKey,
-  variant = "grid",
+  variant = "gridModern",
   limit = 10,
-  imgWidth,
-  imgHeight,
   hideProductDescription = false,
   showCategory = false,
   showRating = false,
@@ -87,19 +85,20 @@ const ProductsBlock: React.FC<ProductsProps> = ({
           {loading && !products?.length ? (
             <ProductFeedLoader limit={limit} uniqueKey={uniqueKey} />
           ) : (
-            products?.map((product: Product) => (
+            products?.map(({ id, attributes }) => (
+              <>
+              {console.log(variant)}
               <ProductCard
                 showCategory={showCategory}
                 showRating={showRating}
                 hideProductDescription={hideProductDescription}
-                key={`product--key${product.id}`}
-                product={product}
-                imgWidth={imgWidth}
-                imgHeight={imgHeight}
+                key={`product--key${id}`}
+                product={attributes}
                 variant={variant}
                 demoVariant={demoVariant}
                 disableBorderRadius={disableBorderRadius}
               />
+              </>
             ))
           )}
         </div>

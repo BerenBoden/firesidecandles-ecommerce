@@ -1,7 +1,8 @@
 import { QueryOptionsType, Product } from '@framework/types';
 import http from '@framework/utils/http';
-import { API_ENDPOINTS } from '@framework/utils/api-endpoints';
+import { API_ENDPOINTS, NEW_API_ENDPOINTS } from '@framework/utils/api-endpoints';
 import { useQuery } from 'react-query';
+import { Products } from '@framework/types';
 
 export const fetchNewArrivalProducts = async ({ queryKey }: any) => {
   const [_key, _params] = queryKey;
@@ -20,4 +21,14 @@ export const useNewArrivalProductsQuery = (options: QueryOptionsType) => {
     return useQuery<Product[], Error>([API_ENDPOINTS.NEW_ARRIVAL_PRODUCTS_ANCIENT, options], fetchNewArrivalAncientProducts);
   }
   return useQuery<Product[], Error>([API_ENDPOINTS.PRODUCTS_ANCIENT, options], fetchNewArrivalProducts);
+};
+
+
+export const getFeaturedProducts = async () => {
+  const { data } = await http.get(NEW_API_ENDPOINTS.GET_FEATURED_PRODUCTS);
+  return data;
+}
+
+export const useGetFeaturedProductsQuery = () => {
+  return useQuery<Products, Error>([NEW_API_ENDPOINTS.GET_POPULAR_PRODUCTS], getFeaturedProducts);
 };

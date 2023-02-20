@@ -4,9 +4,15 @@ import Layout from "@components/layout/layout";
 import { GetStaticProps } from "next";
 import { QueryClient } from "react-query";
 import { dehydrate } from "react-query/hydration";
-import { API_ENDPOINTS } from "@framework/utils/api-endpoints";
+import {
+  API_ENDPOINTS,
+  NEW_API_ENDPOINTS,
+} from "@framework/utils/api-endpoints";
 import { fetchFlashSaleProducts } from "@framework/product/get-all-flash-sale-products";
-import { fetchCategories } from "@framework/category/get-all-categories";
+import {
+  fetchCategories,
+  getProductCategories,
+} from "@framework/category/get-all-categories";
 import { fetchNewArrivalProducts } from "@framework/product/get-all-new-arrival-products";
 import { fetchBrands } from "@framework/brand/get-all-brands";
 import ProductsFeatured from "@containers/products-featured";
@@ -23,74 +29,56 @@ import BrandGridBlock from "@containers/brand-grid-block";
 import TestimonialCarousel from "@containers/testimonial-carousel";
 import SubscriptionWithBg from "@components/common/subscription-with-bg";
 import { homeSixHeroSlider as banners } from "@framework/static/banner";
+import { getHomePageContent } from "@framework/content/get-home-page-content";
+import { HomePageData } from "@framework/types";
+import BannerWithProducts from "@containers/banner-with-products";
 
-export default function Home() {
-	return (
-		<>
-			<Container>
-				<HeroSlider data={banners} buttonGroupClassName="hidden" />
-				<SaleBannerGrid />
-				<CategoryBlockIcon sectionHeading="text-featured-categories" />
-				<ProductsFeatured
-					limit={4}
-					variant="combined"
-					sectionHeading="text-featured-products"
+export default function Home({ content }: { content: HomePageData }) {
+  const { hero, featured }: any = content;
+
+  return (
+    <>
+      <Container>
+        <HeroSlider data={hero} buttonGroupClassName="hidden" />
+        <BannerWithProducts
+					sectionHeading="Our Bestsellers"
+					categorySlug="/search"
+					variant="reverse"
 				/>
-				<ProductsFlashSaleCarousel />
-				<BannerCard
+        <SaleBannerGrid data={featured} />
+        {/* <ProductsFlashSaleCarousel /> */}
+        {/* <BannerCard
 					key={`banner--key${banner.id}`}
 					banner={banner}
 					href={`${ROUTES.COLLECTIONS}/${banner.slug}`}
 					className="mb-12 lg:mb-14 xl:mb-16 pb-0.5 lg:pb-1 xl:pb-0"
-				/>
-				<NewArrivalsProductFeed />
-				<SaleBannerWithProducts
-					sectionHeading="text-on-selling-products"
-					categorySlug="/search"
-				/>
-				<BrandGridBlock
-					sectionHeading="text-top-brands"
-					limit={12}
-					variant="6column"
-				/>
-				<TestimonialCarousel sectionHeading="text-testimonial" />
-				<SubscriptionWithBg />
-			</Container>
-		</>
-	);
+				/> */}
+        <NewArrivalsProductFeed />
+        <CategoryBlockIcon sectionHeading="featured categories" />
+        <SaleBannerWithProducts
+          sectionHeading="Best selling products"
+          categorySlug="/search"
+        />
+        <BrandGridBlock
+          sectionHeading="Top Categories"
+          limit={12}
+          variant="6column"
+        />
+        {/* <TestimonialCarousel sectionHeading="text-testimonial" /> */}
+        <SubscriptionWithBg />
+      </Container>
+    </>
+  );
 }
 
 Home.Layout = Layout;
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
-	const queryClient = new QueryClient();
-
-	await queryClient.prefetchQuery(
-		[API_ENDPOINTS.FLASH_SALE_PRODUCTS, { limit: 10 }],
-		fetchFlashSaleProducts
-	);
-	await queryClient.prefetchQuery(
-		[API_ENDPOINTS.CATEGORIES, { limit: 10 }],
-		fetchCategories
-	);
-	await queryClient.prefetchQuery(
-		[API_ENDPOINTS.NEW_ARRIVAL_PRODUCTS, { limit: 10 }],
-		fetchNewArrivalProducts
-	);
-	await queryClient.prefetchQuery(
-		[API_ENDPOINTS.BRANDS, { limit: 0 }],
-		fetchBrands
-	);
-
-	return {
-		props: {
-			dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
-			...(await serverSideTranslations(locale!, [
-				"common",
-				"forms",
-				"menu",
-				"footer",
-			])),
-		},
-		revalidate: 60,
-	};
+export const getStaticProps: GetStaticProps = async () => {
+  const { data: content } = await getHomePageContent();
+  //   const { data: categories } = await getProductCategories();
+  return {
+    props: {
+      content,
+      //   categories,
+    },
+  };
 };

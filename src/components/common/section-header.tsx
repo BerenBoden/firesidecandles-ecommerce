@@ -13,7 +13,7 @@ const SectionHeader: React.FC<Props> = ({
   sectionHeading = 'text-section-title',
   categorySlug,
   className = 'pb-0.5 mb-4 md:mb-5 lg:mb-6 2xl:mb-7 3xl:mb-8',
-  textClassName = '',
+  textClassName = 'capitalize',
 }) => {
   const { t } = useTranslation('common')
   return (

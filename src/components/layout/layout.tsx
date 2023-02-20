@@ -7,11 +7,8 @@ import CookieBar from "@components/common/cookie-bar";
 import { useAcceptCookies } from "@utils/use-accept-cookies";
 import Button from "@components/ui/button";
 import { useTranslation } from "next-i18next";
-import { useQuery } from "react-query";
-import { getCategories } from "@framework/category/get-all-categories";
 
 export default function Layout({ children }: React.PropsWithChildren<{}>) {
-  const { data: categories } = useQuery(["categories"], getCategories);
   const { acceptedCookies, onAcceptCookies } = useAcceptCookies();
   const { t } = useTranslation("common");
   return (
@@ -47,9 +44,11 @@ export default function Layout({ children }: React.PropsWithChildren<{}>) {
           ],
         }}
       />
-      <Header categories={categories} />
+
+      <Header />
+
       <main
-        className="relative flex-grow"
+        className="relative w-10/12 mx-auto"
         style={{
           minHeight: "-webkit-fill-available",
           WebkitOverflowScrolling: "touch",

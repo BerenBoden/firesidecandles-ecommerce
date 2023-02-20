@@ -1,10 +1,9 @@
-import { CategoriesQueryOptionsType, Category } from "@framework/types";
+import { CategoriesQueryOptionsType, Category, Categories } from "@framework/types";
 import http from "@framework/utils/http";
 import {
   NEW_API_ENDPOINTS,
   API_ENDPOINTS,
 } from "@framework/utils/api-endpoints";
-import { Categories } from "@framework/types";
 import { useQuery } from "react-query";
 
 export const fetchCategories = async ({ queryKey }: any) => {
@@ -36,13 +35,26 @@ export const useCategoriesQuery = (options: CategoriesQueryOptionsType) => {
   );
 };
 
-export const getCategories = async ({ queryKey }: any) => {
+
+//NEW API
+export const useGetProductCategoriesQuery = () => {
+  return useQuery<Categories[], Error>(
+    [NEW_API_ENDPOINTS.GET_PRODUCT_CATEGORIES],
+    getProductCategories
+  );
+}
+
+export const getProductCategories = async () => {
+  const {
+    data: { data },
+  } = await http.get(NEW_API_ENDPOINTS.GET_PRODUCT_CATEGORIES);
+  return data;
+};
+
+export const getArticleCategories = async ({ queryKey }: any) => {
   const [_key, _params] = queryKey;
   const {
     data: { data },
-  } = await http.get(NEW_API_ENDPOINTS.GET_CATEGORIES);
-  return data.data.map((category: Categories) => ({
-    ...category.attributes,
-    id: category.id,
-  }));
+  } = await http.get(NEW_API_ENDPOINTS.GET_ARTICLE_CATEGORIES);
+  return data;
 };

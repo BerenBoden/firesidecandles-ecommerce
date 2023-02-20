@@ -4,6 +4,7 @@ import { FaLink } from 'react-icons/fa'
 import { LinkProps } from 'next/link'
 import { useTranslation } from 'next-i18next'
 import cn from 'classnames'
+import Image from 'next/image'
 
 interface Props {
   item: any
@@ -20,7 +21,8 @@ const IconCard: React.FC<Props> = ({
 }) => {
   const { name, icon, tags, productCount } = item ?? {}
   const { t } = useTranslation('common')
-
+  const image = item.category_image?.data?.attributes?.formats?.thumbnail?.url
+  
   return (
     <Link
       href={href}
@@ -44,9 +46,11 @@ const IconCard: React.FC<Props> = ({
           'flex-shrink-0': variant === 'list',
         })}
       >
-        <img
-          src={icon}
+        {image && (<Image
+          src={`${process.env.NEXT_PUBLIC_STRAPI_IMAGE_URL}${image}`}
           alt={name || t('text-card-thumbnail')}
+          width={1000}
+          height={1000}
           className={cn('mb-0', {
             'mx-auto mb-4 sm:mb-6 w-2/4 sm:w-2/3 md:w-8/12 3xl:w-full':
               variant === 'default',
@@ -55,7 +59,7 @@ const IconCard: React.FC<Props> = ({
               variant === 'circle',
             'mx-auto w-[40%] lg:w-2/4': variant === 'list',
           })}
-        />
+        />)}
         {effectActive === true && variant === 'circle' && (
           <>
             <div className='absolute top-0 left-0 bg-black w-full h-full opacity-0 transition-opacity duration-300 group-hover:opacity-30 rounded-full' />

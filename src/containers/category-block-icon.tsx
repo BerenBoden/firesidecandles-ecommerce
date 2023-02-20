@@ -3,7 +3,10 @@ import SectionHeader from "@components/common/section-header";
 import Carousel from "@components/ui/carousel/carousel";
 import CardIconLoader from "@components/ui/loaders/card-icon-loader";
 import CardRoundedLoader from "@components/ui/loaders/card-rounded-loader";
-import { useCategoriesQuery } from "@framework/category/get-all-categories";
+import {
+  useCategoriesQuery,
+  useGetProductCategoriesQuery,
+} from "@framework/category/get-all-categories";
 import { ROUTES } from "@utils/routes";
 import Alert from "@components/ui/alert";
 import cn from "classnames";
@@ -101,17 +104,24 @@ const CategoryBlockIcon: React.FC<CategoriesProps> = ({
   sectionHeading,
   variant = "default",
 }) => {
-  const { data, isLoading, error } = useCategoriesQuery({
-    limit: 10,
-  });
+  // const { data, isLoading, error } = useCategoriesQuery({
+  //   limit: 10,
+  // });
 
+  const { data, isLoading, error } = useGetProductCategoriesQuery();
+  console.log(data);
   return (
     <>
       <div className={cn(className)}>
         <SectionHeader sectionHeading={sectionHeading} />
         <div className="flex">
           <div className="mr-10">
-            <h1 className="text-black text-xl">Olars Categories</h1>
+            <h1
+              className="text-black text-3xl"
+              style={{ fontFamily: "'Dancing Script', cursive" }}
+            >
+              Categories
+            </h1>
             <p>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
               eiusmod. Tempor incididunt ut labore…
@@ -146,11 +156,11 @@ const CategoryBlockIcon: React.FC<CategoriesProps> = ({
                       </SwiperSlide>
                     );
                   })
-                : data?.categories?.data?.map((category: Category) => (
-                    <SwiperSlide key={`category--icon-key-${category.id}`}>
+                : data?.map(({ id, attributes }) => (
+                    <SwiperSlide key={`category--icon-key-${id}`}>
                       <IconCard
-                        item={category}
-                        href={`${ROUTES.CATEGORY}/${category.slug}`}
+                        item={attributes}
+                        href={`${ROUTES.CATEGORY}/${attributes.slug}`}
                         effectActive={true}
                         variant={variant}
                       />

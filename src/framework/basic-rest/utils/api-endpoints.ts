@@ -33,5 +33,9 @@ export const API_ENDPOINTS = {
 };
 
 export const NEW_API_ENDPOINTS = {
-  GET_CATEGORIES: '/identifiers?start=0&limit=-1&content=article&identifier=categories'
+  GET_ARTICLE_CATEGORIES: '/identifiers?start=0&limit=-1&content=article&identifier=categories',
+  GET_PRODUCT_CATEGORIES: '/identifiers?start=0&limit=-1&content=product&identifier=categories',
+  GET_HOME_PAGE_CONTENT: '/page-content/home',
+  GET_POPULAR_PRODUCTS: '/products?start=0&limit=10',
+  GET_FEATURED_PRODUCTS: '/products?start=0&limit=10',
 }

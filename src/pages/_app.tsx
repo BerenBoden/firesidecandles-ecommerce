@@ -18,6 +18,8 @@ import "@fontsource/open-sans";
 import "@fontsource/open-sans/600.css";
 import "@fontsource/open-sans/700.css";
 import "@fontsource/satisfy";
+import "@fontsource/dancing-script"
+// import '../fonts/fonts.css';
 // external
 import "react-toastify/dist/ReactToastify.css";
 // base css file
